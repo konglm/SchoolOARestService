@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.AnnouncementSetMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.AnnouncementSet" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="SchoolId" property="schoolid" jdbcType="VARCHAR" />
+    <result column="CheckManId" property="checkmanid" jdbcType="BIGINT" />
+    <result column="CheckManCode" property="checkmancode" jdbcType="VARCHAR" />
+    <result column="CheckManName" property="checkmanname" jdbcType="VARCHAR" />
+    <result column="CheckManPic" property="checkmanpic" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, SchoolId, CheckManId, CheckManCode, CheckManName, CheckManPic
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from AnnouncementSet
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from AnnouncementSet
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.AnnouncementSet" >
+    insert into AnnouncementSet (TabId, SchoolId, CheckManId, 
+      CheckManCode, CheckManName, CheckManPic
+      )
+    values (#{tabid,jdbcType=INTEGER}, #{schoolid,jdbcType=VARCHAR}, #{checkmanid,jdbcType=BIGINT}, 
+      #{checkmancode,jdbcType=VARCHAR}, #{checkmanname,jdbcType=VARCHAR}, #{checkmanpic,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.AnnouncementSet" >
+    insert into AnnouncementSet
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="schoolid != null" >
+        SchoolId,
+      </if>
+      <if test="checkmanid != null" >
+        CheckManId,
+      </if>
+      <if test="checkmancode != null" >
+        CheckManCode,
+      </if>
+      <if test="checkmanname != null" >
+        CheckManName,
+      </if>
+      <if test="checkmanpic != null" >
+        CheckManPic,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="schoolid != null" >
+        #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="checkmanid != null" >
+        #{checkmanid,jdbcType=BIGINT},
+      </if>
+      <if test="checkmancode != null" >
+        #{checkmancode,jdbcType=VARCHAR},
+      </if>
+      <if test="checkmanname != null" >
+        #{checkmanname,jdbcType=VARCHAR},
+      </if>
+      <if test="checkmanpic != null" >
+        #{checkmanpic,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.AnnouncementSet" >
+    update AnnouncementSet
+    <set >
+      <if test="schoolid != null" >
+        SchoolId = #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="checkmanid != null" >
+        CheckManId = #{checkmanid,jdbcType=BIGINT},
+      </if>
+      <if test="checkmancode != null" >
+        CheckManCode = #{checkmancode,jdbcType=VARCHAR},
+      </if>
+      <if test="checkmanname != null" >
+        CheckManName = #{checkmanname,jdbcType=VARCHAR},
+      </if>
+      <if test="checkmanpic != null" >
+        CheckManPic = #{checkmanpic,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.AnnouncementSet" >
+    update AnnouncementSet
+    set SchoolId = #{schoolid,jdbcType=VARCHAR},
+      CheckManId = #{checkmanid,jdbcType=BIGINT},
+      CheckManCode = #{checkmancode,jdbcType=VARCHAR},
+      CheckManName = #{checkmanname,jdbcType=VARCHAR},
+      CheckManPic = #{checkmanpic,jdbcType=VARCHAR}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,920 @@
+/*----------------------------------------------------------------
+ *  Copyright (C) 2017山东金视野教育科技股份有限公司
+ * 版权所有。 
+ *
+ * 文件名：
+ * 文件功能描述：
+ *
+ * 
+ * 创建标识：
+ *
+ * 修改标识：
+ * 修改描述：
+ *----------------------------------------------------------------*/
+
+package com.goldeneyes.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.goldeneyes.pojo.AffairApply;
+import com.goldeneyes.pojo.AffairApprove;
+import com.goldeneyes.service.AffairApproveService;
+import com.goldeneyes.service.NoticeService;
+import com.goldeneyes.util.CommonTool;
+import com.goldeneyes.util.PushUtil;
+import com.goldeneyes.vo.AffairApplyVO;
+import com.goldeneyes.vo.AffairApproveVO;
+import com.goldeneyes.vo.ApplyAndApproveVO;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+/**
+ * @author Administrator
+ *
+ */
+@Controller
+@RequestMapping("/approve")
+public class AffairApproveController {
+	@Resource
+	AffairApproveService affairApproveService;
+	@Resource
+	NoticeService noticeService;
+	
+	private final Log logger = LogFactory.getLog(getClass());
+	
+	/**
+	 * 14.新增事务及文件申请
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/addAffairApply")
+	public void addAffairApply(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("schoolId") || !jsonInput.has("applyTitle") || !jsonInput.has("applyContent")
+				|| !jsonInput.has("applyEncName") || !jsonInput.has("applyEncAddr")
+				|| !jsonInput.has("applyManId") || !jsonInput.has("applyManCode") || !jsonInput.has("applyManName") || !jsonInput.has("applyManPic")
+				|| !jsonInput.has("approveManIds") || !jsonInput.has("approveManCodes") || !jsonInput.has("approveManNames")
+				|| !jsonInput.has("approveManPics")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			String schoolId = "";
+			String applyTitle = "";
+			String applyContent = "";
+			String applyEncName = "";
+			String applyEncAddr = "";
+			Long applyManId = 0l;
+			String applyManCode = "";
+			String applyManName = "";
+			String applyManPic = "";
+			List<Long> approveManIds = new ArrayList<Long>();
+			List<String> approveManCodes = new ArrayList<String>();
+			List<String> approveManNames = new ArrayList<String>();
+			List<String> approveManPics = new ArrayList<String>();
+			try {
+				schoolId = jsonInput.getString("schoolId");
+				applyTitle = jsonInput.getString("applyTitle");
+				applyContent = jsonInput.getString("applyContent");
+				applyEncName = jsonInput.getString("applyEncName");
+				applyEncAddr = jsonInput.getString("applyEncAddr");
+				applyManId = Long.parseLong(jsonInput.getString("applyManId"));
+				applyManCode = jsonInput.getString("applyManCode");
+				applyManName = jsonInput.getString("applyManName");
+				applyManPic = jsonInput.getString("applyManPic");
+				approveManIds = CommonTool.getListLongFromJsonArray(jsonInput.getJSONArray("approveManIds"));
+				approveManCodes = CommonTool.getListFromJsonArray(jsonInput.getJSONArray("approveManCodes"));
+				approveManNames = CommonTool.getListFromJsonArray(jsonInput.getJSONArray("approveManNames"));
+				approveManPics = CommonTool.getListFromJsonArray(jsonInput.getJSONArray("approveManPics"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			int success = 0;
+			try {	
+				success = affairApproveService.addAffairApply(schoolId, applyTitle, applyContent, applyEncName, applyEncAddr
+						, applyManId,applyManCode, applyManName, applyManPic, approveManIds, approveManCodes, approveManNames, approveManPics);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+			if (success == 0) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1002").toString());
+			} else {
+				jsonData.put("Result", success);
+				//成功后发送推送
+				for(Long approveManId: approveManIds){
+					PushMsg pushMsg = new PushMsg(schoolId, approveManId, applyTitle, applyContent);
+					Thread thread = new Thread(pushMsg);
+					thread.start();
+				}
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			}
+		}
+	}
+	
+	private class PushMsg implements Runnable {
+		private String schoolId;
+		private String applyTitle;
+		private String applyContent;
+		private Long approveManId;
+		
+		public PushMsg(String schoolId, Long approveManId, String applyTitle, String applyContent){
+			this.schoolId = schoolId;
+			this.approveManId = approveManId;
+			this.applyTitle = applyTitle;
+			this.applyContent = applyContent;
+		}
+
+		/**
+		 *  @author Administrator
+		 */
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub		
+			int cnt = 0;
+			try {
+				cnt = affairApproveService.getNoApproveCntByMan(schoolId, approveManId) + noticeService.getNoReadCntByMan(schoolId, approveManId);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			logger.info(approveManId + "===NoReadCn===" + cnt);
+			PushUtil.pushMsg(approveManId, applyTitle, applyContent, cnt);
+		}
+	}
+	
+	/**
+	 * 15.撤销事务及文件申请
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/setAffairApplyUndo")
+	public void setAffairApplyUndo(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("applyId")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			int applyId = 0;
+
+			try {
+				applyId = Integer.parseInt(jsonInput.getString("applyId"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			int success = 0;
+			try {
+				// 先判断是否已被审批
+				if (affairApproveService.getApplyApproveCntById(applyId) > 0) {
+					CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1015").toString());
+					return;
+				} else {
+					success = affairApproveService.setAffairApplyUndo(applyId);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+			if (success == 0) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1002").toString());
+			} else {
+				jsonData.put("Result", success);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			}
+		}
+	}
+
+	/**
+	 * 16.审批事务及文件申请
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/setAffairApprove")
+	public void setAffairApprove(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("approveId") || !jsonInput.has("approveContent") || !jsonInput.has("approveResult")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			int approveId = 0;
+			String approveContent = "";
+			int approveResult = 0;
+
+			try {
+				approveId = Integer.parseInt(jsonInput.getString("approveId"));
+				approveContent = jsonInput.getString("approveContent");
+				approveResult = Integer.parseInt(jsonInput.getString("approveResult"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			int success = 0;
+			try {
+				success = affairApproveService.setAffairApprove(approveId, approveContent, approveResult);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+			if (success == 0) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1002").toString());
+			} else {
+				jsonData.put("Result", success);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			}
+		}
+	}
+	/**
+	 * 17.获取事务及文件申请列表
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/getAffairApply")
+	public void getAffairApply(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("schoolId") || !jsonInput.has("title") || !jsonInput.has("status") 
+				|| !jsonInput.has("progress") || !jsonInput.has("beginTime") || !jsonInput.has("endTime") 
+				|| !jsonInput.has("pageIndex") || !jsonInput.has("pageSize") || !jsonInput.has("applyManId")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			String schoolId = "";
+			String title = "";
+			Long applyManId = 0l;
+			int status = 0;
+			int progress = 0;
+			String beginTime = "";
+			String endTime = "";
+			int pageIndex = 0;
+			int pageSize = 0;
+			
+			try {
+				schoolId = jsonInput.getString("schoolId");
+				title = jsonInput.getString("title");
+				applyManId = Long.parseLong(jsonInput.getString("applyManId"));
+				status = Integer.parseInt(jsonInput.getString("status"));
+				progress = Integer.parseInt(jsonInput.getString("progress"));
+				beginTime = jsonInput.getString("beginTime");
+				endTime = jsonInput.getString("endTime");
+				pageIndex = Integer.parseInt(jsonInput.getString("pageIndex"));
+				pageSize = Integer.parseInt(jsonInput.getString("pageSize"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+			if ((pageIndex <= 0) || (pageSize < 0)) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1006").toString());
+				return;
+			}
+			int totalCnt = 0;
+			int totalPage = 0;
+			List<AffairApplyVO> affairApplys = new ArrayList<AffairApplyVO>();
+			try {
+				totalCnt = affairApproveService.getAffairApplyCnt(schoolId, title, applyManId, status, progress, beginTime, endTime);
+				totalPage = CommonTool.getTotalPage(totalCnt, pageSize);
+				if (pageSize == 0) {
+					affairApplys = affairApproveService.getAffairApply(schoolId, title, applyManId, status, progress, beginTime, endTime, 1, totalCnt);
+				} else {
+					affairApplys = affairApproveService.getAffairApply(schoolId, title, applyManId, status, progress, beginTime, endTime, pageIndex, pageSize);
+				}
+				JSONArray jsonArray = new JSONArray();
+				for (AffairApplyVO affairApply : affairApplys) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("ApplyId", affairApply.getTabid());
+					jsonobj.put("ApplyTitle", affairApply.getApplytitle());
+					jsonobj.put("ApplyStatus", affairApply.getStatus());
+					jsonobj.put("ApplyProgress", affairApply.getProgress());
+					jsonobj.put("ApplyManName", affairApply.getApplymanname());
+					jsonobj.put("ApplyManPic", affairApply.getApplymanpic());
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					jsonobj.put("CreateTime", sdf.format(affairApply.getSendtime()));
+					jsonArray.put(jsonobj);
+				}
+				jsonData.put("TotalCnt", totalCnt);
+				jsonData.put("TotalPage", totalPage);
+				jsonData.put("Data", jsonArray);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+
+		}
+	}
+	/**
+	 * 18.获取事务及文件审批列表（审批人为单人）
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/getAffairApprove")
+	public void getAffairApprove(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("schoolId") || !jsonInput.has("title") || !jsonInput.has("status") 
+				|| !jsonInput.has("progress") || !jsonInput.has("beginTime") || !jsonInput.has("endTime") 
+				|| !jsonInput.has("pageIndex") || !jsonInput.has("pageSize") || !jsonInput.has("approveManId")
+				|| !jsonInput.has("applyMan")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			String schoolId = "";
+			Long approveManId = 0l;
+			String title = "";
+			String applyMan = "";
+			int status = 0;
+			int progress = 0;
+			String beginTime = "";
+			String endTime = "";
+			int pageIndex = 0;
+			int pageSize = 0;
+			
+			try {
+				schoolId = jsonInput.getString("schoolId");
+				approveManId = Long.parseLong(jsonInput.getString("approveManId"));
+				title = jsonInput.getString("title");
+				applyMan = jsonInput.getString("applyMan");
+				status = Integer.parseInt(jsonInput.getString("status"));
+				progress = Integer.parseInt(jsonInput.getString("progress"));
+				beginTime = jsonInput.getString("beginTime");
+				endTime = jsonInput.getString("endTime");
+				pageIndex = Integer.parseInt(jsonInput.getString("pageIndex"));
+				pageSize = Integer.parseInt(jsonInput.getString("pageSize"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+			if ((pageIndex <= 0) || (pageSize < 0)) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1006").toString());
+				return;
+			}
+			int totalCnt = 0;
+			int totalPage = 0;
+			List<AffairApproveVO> affairApproves = new ArrayList<AffairApproveVO>();
+			try {
+				totalCnt = affairApproveService.getAffairApproveCnt(schoolId, approveManId, title, applyMan, status, progress, beginTime, endTime);
+				totalPage = CommonTool.getTotalPage(totalCnt, pageSize);
+				if (pageSize == 0) {
+					affairApproves = affairApproveService.getAffairApprove(schoolId, approveManId, title, applyMan, status, progress, beginTime, endTime, 1, totalCnt);
+				} else {
+					affairApproves = affairApproveService.getAffairApprove(schoolId, approveManId, title, applyMan, status, progress, beginTime, endTime, pageIndex, pageSize);
+				}
+				JSONArray jsonArray = new JSONArray();
+				for (AffairApproveVO affairApprove : affairApproves) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("ApproveId", affairApprove.getTabid());
+					jsonobj.put("ApplyId", affairApprove.getApplyid());
+					jsonobj.put("ApplyManName", affairApprove.getApplymanname());
+					jsonobj.put("ApplyManPic", affairApprove.getApplymanpic());
+					jsonobj.put("ApplyTitle", affairApprove.getApplytitle());
+					jsonobj.put("ApproveStatus", affairApprove.getStatus());
+					jsonobj.put("ApproveProgress", affairApprove.getProgress());
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					if(affairApprove.getSendtime() == null){
+						jsonobj.put("CreateTime", "");
+					} else {
+						jsonobj.put("CreateTime", sdf.format(affairApprove.getSendtime()));
+					}
+					if(affairApprove.getApprovetime() == null){
+						jsonobj.put("ApproveTime", "");
+					} else {
+						jsonobj.put("ApproveTime", sdf.format(affairApprove.getApprovetime()));
+					}
+					jsonArray.put(jsonobj);
+				}
+				jsonData.put("TotalCnt", totalCnt);
+				jsonData.put("TotalPage", totalPage);
+				jsonData.put("Data", jsonArray);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+
+		}
+	}
+	/**
+	 * 19.通过ID获取事务及文件申请
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/getAffairApplyById")
+	public void getAffairApplyById(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("applyId")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			int applyId = 0;
+			try {
+				applyId = Integer.parseInt(jsonInput.getString("applyId"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			try {
+				AffairApply apply = affairApproveService.getAffairApplyById(applyId);
+				
+				jsonData.put("ApplyId", apply.getTabid());
+				jsonData.put("ApplyManId", String.valueOf(apply.getApplymanid()));
+				jsonData.put("ApplyManName", apply.getApplymanname());
+				jsonData.put("ApplyManPic", apply.getApplymanpic());
+				jsonData.put("ApplyTitle", apply.getApplytitle());
+				jsonData.put("Status", apply.getProgress());
+				jsonData.put("ApplyContent", apply.getApplycontent());				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				jsonData.put("CreateTime", sdf.format(apply.getSendtime()));				
+				jsonData.put("ApplyEncName", apply.getApplyencname());
+				jsonData.put("ApplyEncAddr", apply.getApplyencaddr());
+				
+				List<AffairApprove> affairApproves = affairApproveService.getAffairApproveByApply(applyId);
+				JSONArray jsonArray = new JSONArray();
+				for (AffairApprove affairApprove : affairApproves) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("ApproveId", affairApprove.getTabid());
+					jsonobj.put("UpperId", affairApprove.getUpperid());
+					jsonobj.put("ApproveManId", String.valueOf(affairApprove.getApprovemanid()));
+					jsonobj.put("ApproveManName", affairApprove.getApprovemanname());
+					jsonobj.put("ApproveManPic", affairApprove.getApprovemanpic());
+					jsonobj.put("ApproveContent", affairApprove.getApprovecontent());
+					jsonobj.put("ApproveStatus", affairApprove.getStatus());
+					if(affairApprove.getApprovetime() == null){
+						jsonobj.put("ApproveTime", "");
+					} else {
+						jsonobj.put("ApproveTime", sdf.format(affairApprove.getApprovetime()));
+					}
+					jsonArray.put(jsonobj);
+				}
+				jsonData.put("ApproveList", jsonArray);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+
+		}
+	}
+	
+	/**
+	 * 20.删除事务及文件申请（删除动作为屏蔽，可恢复）
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/delAffairApplys")
+	public void delAffairApplys(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("applyIds") || !jsonInput.has("status")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			List<Integer> applyIds = new ArrayList<Integer>();
+			int status = 0;
+
+			try {
+				applyIds = CommonTool.getListIntFromJsonArray(jsonInput.getJSONArray("applyIds"));
+				status = Integer.parseInt(jsonInput.getString("status"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			int success = 0;
+			try {
+				success = affairApproveService.delAffairApplys(applyIds, status);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+			if (success == 0) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1002").toString());
+			} else {
+				jsonData.put("Result", success);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			}
+		}
+	}
+	
+	/**
+	 * 21.获取全部事务及文件申请列表
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/getAllAffairApply")
+	public void getAllAffairApply(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("schoolId") || !jsonInput.has("title") || !jsonInput.has("applyMan")
+				|| !jsonInput.has("beginTime") || !jsonInput.has("endTime") || !jsonInput.has("status")
+				|| !jsonInput.has("pageIndex") || !jsonInput.has("pageSize")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			String schoolId = "";
+			String title = "";
+			String applyMan = "";
+			String beginTime = "";
+			String endTime = "";
+			int status = 0;
+			int pageIndex = 0;
+			int pageSize = 0;
+			
+			try {
+				schoolId = jsonInput.getString("schoolId");
+				title = jsonInput.getString("title");
+				applyMan = jsonInput.getString("applyMan");
+				beginTime = jsonInput.getString("beginTime");
+				endTime = jsonInput.getString("endTime");
+				status = Integer.parseInt(jsonInput.getString("status"));
+				pageIndex = Integer.parseInt(jsonInput.getString("pageIndex"));
+				pageSize = Integer.parseInt(jsonInput.getString("pageSize"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+			if ((pageIndex <= 0) || (pageSize < 0)) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1006").toString());
+				return;
+			}
+			int totalCnt = 0;
+			int totalPage = 0;
+			List<AffairApplyVO> affairApplys = new ArrayList<AffairApplyVO>();
+			try {
+				totalCnt = affairApproveService.getAllAffairApplyCnt(schoolId, title, applyMan, beginTime, endTime, status);
+				totalPage = CommonTool.getTotalPage(totalCnt, pageSize);
+				if (pageSize == 0) {
+					affairApplys = affairApproveService.getAllAffairApply(schoolId, title, applyMan, beginTime, endTime, 1, totalCnt, status);
+				} else {
+					affairApplys = affairApproveService.getAllAffairApply(schoolId, title, applyMan, beginTime, endTime, pageIndex, pageSize, status);
+				}
+				JSONArray jsonArray = new JSONArray();
+				for (AffairApplyVO affairApply : affairApplys) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("ApplyId", affairApply.getTabid());
+					jsonobj.put("ApplyTitle", affairApply.getApplytitle());
+					jsonobj.put("ApplyManName", affairApply.getApplymanname());
+					jsonobj.put("ApplyManPic", affairApply.getApplymanpic());
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					jsonobj.put("CreateTime", sdf.format(affairApply.getSendtime()));
+					jsonobj.put("Status", affairApply.getStatus());
+					jsonArray.put(jsonobj);
+				}
+				jsonData.put("TotalCnt", totalCnt);
+				jsonData.put("TotalPage", totalPage);
+				jsonData.put("Data", jsonArray);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+
+		}
+	}
+	
+	/**
+	 * 23.通过审批ID获取事务及文件申请及审批
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/getAffairApproveById")
+	public void getAffairApproveById(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("approveId")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			int approveId = 0;
+			try {
+				approveId = Integer.parseInt(jsonInput.getString("approveId"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			try {
+				ApplyAndApproveVO apply = affairApproveService.getAffairApproveById(approveId);
+				
+				jsonData.put("ApplyId", apply.getApplyid());
+				jsonData.put("ApplyManId", String.valueOf(apply.getApplymanid()));
+				jsonData.put("ApplyManName", apply.getApplymanname());
+				jsonData.put("ApplyManPic", apply.getApplymanpic());
+				jsonData.put("ApplyTitle", apply.getApplytitle());
+				jsonData.put("ApplyStatus", apply.getProgress());
+				jsonData.put("ApplyContent", apply.getApplycontent());				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				jsonData.put("CreateTime", sdf.format(apply.getSendtime()));				
+				jsonData.put("ApplyEncName", apply.getApplyencname());
+				jsonData.put("ApplyEncAddr", apply.getApplyencaddr());
+				if(apply.getApprovecontent() == null) {
+					jsonData.put("ApproveContent", "");
+				} else {
+					jsonData.put("ApproveContent", apply.getApprovecontent());
+				}
+				if(apply.getApprovetime() == null) {
+					jsonData.put("ApproveTime", "");
+				} else {
+					jsonData.put("ApproveTime", sdf.format(apply.getApprovetime()));
+				}
+				jsonData.put("ApproveStatus", apply.getStatus());
+				
+				List<AffairApprove> affairApproves = affairApproveService.getAffairApproveByApply(apply.getApplyid());
+				JSONArray jsonArray = new JSONArray();
+				for (AffairApprove affairApprove : affairApproves) {
+					JSONObject jsonobj = new JSONObject();
+					jsonobj.put("ApproveId", affairApprove.getTabid());
+					jsonobj.put("UpperId", affairApprove.getUpperid());
+					jsonobj.put("ApproveManId", String.valueOf(affairApprove.getApprovemanid()));
+					jsonobj.put("ApproveManName", affairApprove.getApprovemanname());
+					jsonobj.put("ApproveManPic", affairApprove.getApprovemanpic());
+					if(affairApprove.getApprovecontent() == null) {
+						jsonobj.put("ApproveContent", "");
+					} else {
+						jsonobj.put("ApproveContent", affairApprove.getApprovecontent());
+					}
+					jsonobj.put("ApproveStatus", affairApprove.getStatus());
+					if(affairApprove.getApprovetime() == null){
+						jsonobj.put("ApproveTime", "");
+					} else {
+						jsonobj.put("ApproveTime", sdf.format(affairApprove.getApprovetime()));
+					}
+					jsonArray.put(jsonobj);
+				}
+				jsonData.put("ApproveList", jsonArray);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+
+		}
+	}
+	/**
+	 * 获取未审批数量
+	 * @param request
+	 * @param response
+	 * @param model
+	 */
+	@RequestMapping("/getNoApproveCntByMan")
+	public void getNoApproveCntByMan(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("schoolId") || !jsonInput.has("approveManId")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			String schoolId = "";
+			Long approveManId = 0l;
+			
+			try {
+				schoolId = jsonInput.getString("schoolId");
+				approveManId = Long.parseLong(jsonInput.getString("approveManId"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			int noApproveCnt = 0;
+			try {
+				noApproveCnt = affairApproveService.getNoApproveCntByMan(schoolId, approveManId);
+
+				jsonData.put("NoApproveCnt", noApproveCnt);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+
+		}
+	}
+	
+	@RequestMapping("/realDelAffairApplys")
+	public void realDelAffairApplys(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+		// 接收参数用
+		JSONObject jsonInput = new JSONObject();
+
+		// 接收APP端发来的json请求
+		String requestStr = "";
+		try {
+			requestStr = (String) request.getAttribute("requestStr");
+			jsonInput = JSONObject.fromObject(requestStr);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+			return;
+		}
+
+		if (!jsonInput.has("applyIds")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			List<Integer> applyIds = new ArrayList<Integer>();
+
+			try {
+				applyIds = CommonTool.getListIntFromJsonArray(jsonInput.getJSONArray("applyIds"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			int success = 0;
+			try {
+				success = affairApproveService.realDelAffairApplys(applyIds);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+			if (success == 0) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1002").toString());
+			} else {
+				jsonData.put("Result", success);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			}
+		}
+	}
+}

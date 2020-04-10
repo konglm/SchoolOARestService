@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.AnnouncementManMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.AnnouncementMan" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="AnnouncementId" property="announcementid" jdbcType="INTEGER" />
+    <result column="ReceiveManId" property="receivemanid" jdbcType="BIGINT" />
+    <result column="ReceiveManCode" property="receivemancode" jdbcType="VARCHAR" />
+    <result column="ReceiveManName" property="receivemanname" jdbcType="VARCHAR" />
+    <result column="ReceiveManPic" property="receivemanpic" jdbcType="VARCHAR" />
+    <result column="ReadTime" property="readtime" jdbcType="TIMESTAMP" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, AnnouncementId, ReceiveManId, ReceiveManCode, ReceiveManName, ReceiveManPic, 
+    ReadTime, Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from AnnouncementMan
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from AnnouncementMan
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.AnnouncementMan" >
+    insert into AnnouncementMan (TabId, AnnouncementId, ReceiveManId, 
+      ReceiveManCode, ReceiveManName, ReceiveManPic, 
+      ReadTime, Status)
+    values (#{tabid,jdbcType=INTEGER}, #{announcementid,jdbcType=INTEGER}, #{receivemanid,jdbcType=BIGINT}, 
+      #{receivemancode,jdbcType=VARCHAR}, #{receivemanname,jdbcType=VARCHAR}, #{receivemanpic,jdbcType=VARCHAR}, 
+      #{readtime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.AnnouncementMan" >
+    insert into AnnouncementMan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="announcementid != null" >
+        AnnouncementId,
+      </if>
+      <if test="receivemanid != null" >
+        ReceiveManId,
+      </if>
+      <if test="receivemancode != null" >
+        ReceiveManCode,
+      </if>
+      <if test="receivemanname != null" >
+        ReceiveManName,
+      </if>
+      <if test="receivemanpic != null" >
+        ReceiveManPic,
+      </if>
+      <if test="readtime != null" >
+        ReadTime,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="announcementid != null" >
+        #{announcementid,jdbcType=INTEGER},
+      </if>
+      <if test="receivemanid != null" >
+        #{receivemanid,jdbcType=BIGINT},
+      </if>
+      <if test="receivemancode != null" >
+        #{receivemancode,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanname != null" >
+        #{receivemanname,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanpic != null" >
+        #{receivemanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="readtime != null" >
+        #{readtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.AnnouncementMan" >
+    update AnnouncementMan
+    <set >
+      <if test="announcementid != null" >
+        AnnouncementId = #{announcementid,jdbcType=INTEGER},
+      </if>
+      <if test="receivemanid != null" >
+        ReceiveManId = #{receivemanid,jdbcType=BIGINT},
+      </if>
+      <if test="receivemancode != null" >
+        ReceiveManCode = #{receivemancode,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanname != null" >
+        ReceiveManName = #{receivemanname,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanpic != null" >
+        ReceiveManPic = #{receivemanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="readtime != null" >
+        ReadTime = #{readtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.AnnouncementMan" >
+    update AnnouncementMan
+    set AnnouncementId = #{announcementid,jdbcType=INTEGER},
+      ReceiveManId = #{receivemanid,jdbcType=BIGINT},
+      ReceiveManCode = #{receivemancode,jdbcType=VARCHAR},
+      ReceiveManName = #{receivemanname,jdbcType=VARCHAR},
+      ReceiveManPic = #{receivemanpic,jdbcType=VARCHAR},
+      ReadTime = #{readtime,jdbcType=TIMESTAMP},
+      Status = #{status,jdbcType=TINYINT}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+</mapper>

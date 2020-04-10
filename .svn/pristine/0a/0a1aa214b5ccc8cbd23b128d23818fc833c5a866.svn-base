@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.AffairApplyMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.AffairApply" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="SchoolId" property="schoolid" jdbcType="VARCHAR" />
+    <result column="ApplyType" property="applytype" jdbcType="INTEGER" />
+    <result column="ApplyTitle" property="applytitle" jdbcType="VARCHAR" />
+    <result column="ApplyContent" property="applycontent" jdbcType="VARCHAR" />
+    <result column="ApplyEncName" property="applyencname" jdbcType="VARCHAR" />
+    <result column="ApplyEncAddr" property="applyencaddr" jdbcType="VARCHAR" />
+    <result column="ApplyManId" property="applymanid" jdbcType="BIGINT" />
+    <result column="ApplyManCode" property="applymancode" jdbcType="VARCHAR" />
+    <result column="ApplyManName" property="applymanname" jdbcType="VARCHAR" />
+    <result column="ApplyManPic" property="applymanpic" jdbcType="VARCHAR" />
+    <result column="SendTime" property="sendtime" jdbcType="TIMESTAMP" />
+    <result column="Progress" property="progress" jdbcType="TINYINT" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, SchoolId, ApplyType, ApplyTitle, ApplyContent, ApplyEncName, ApplyEncAddr, 
+    ApplyManId, ApplyManCode, ApplyManName, ApplyManPic, SendTime, Progress, Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from AffairApply
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from AffairApply
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.AffairApply" >
+    insert into AffairApply (TabId, SchoolId, ApplyType, 
+      ApplyTitle, ApplyContent, ApplyEncName, 
+      ApplyEncAddr, ApplyManId, ApplyManCode, 
+      ApplyManName, ApplyManPic, SendTime, 
+      Progress, Status)
+    values (#{tabid,jdbcType=INTEGER}, #{schoolid,jdbcType=VARCHAR}, #{applytype,jdbcType=INTEGER}, 
+      #{applytitle,jdbcType=VARCHAR}, #{applycontent,jdbcType=VARCHAR}, #{applyencname,jdbcType=VARCHAR}, 
+      #{applyencaddr,jdbcType=VARCHAR}, #{applymanid,jdbcType=BIGINT}, #{applymancode,jdbcType=VARCHAR}, 
+      #{applymanname,jdbcType=VARCHAR}, #{applymanpic,jdbcType=VARCHAR}, #{sendtime,jdbcType=TIMESTAMP}, 
+      #{progress,jdbcType=TINYINT}, #{status,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.AffairApply" >
+    insert into AffairApply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="schoolid != null" >
+        SchoolId,
+      </if>
+      <if test="applytype != null" >
+        ApplyType,
+      </if>
+      <if test="applytitle != null" >
+        ApplyTitle,
+      </if>
+      <if test="applycontent != null" >
+        ApplyContent,
+      </if>
+      <if test="applyencname != null" >
+        ApplyEncName,
+      </if>
+      <if test="applyencaddr != null" >
+        ApplyEncAddr,
+      </if>
+      <if test="applymanid != null" >
+        ApplyManId,
+      </if>
+      <if test="applymancode != null" >
+        ApplyManCode,
+      </if>
+      <if test="applymanname != null" >
+        ApplyManName,
+      </if>
+      <if test="applymanpic != null" >
+        ApplyManPic,
+      </if>
+      <if test="sendtime != null" >
+        SendTime,
+      </if>
+      <if test="progress != null" >
+        Progress,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="schoolid != null" >
+        #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="applytype != null" >
+        #{applytype,jdbcType=INTEGER},
+      </if>
+      <if test="applytitle != null" >
+        #{applytitle,jdbcType=VARCHAR},
+      </if>
+      <if test="applycontent != null" >
+        #{applycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="applyencname != null" >
+        #{applyencname,jdbcType=VARCHAR},
+      </if>
+      <if test="applyencaddr != null" >
+        #{applyencaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="applymanid != null" >
+        #{applymanid,jdbcType=BIGINT},
+      </if>
+      <if test="applymancode != null" >
+        #{applymancode,jdbcType=VARCHAR},
+      </if>
+      <if test="applymanname != null" >
+        #{applymanname,jdbcType=VARCHAR},
+      </if>
+      <if test="applymanpic != null" >
+        #{applymanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtime != null" >
+        #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="progress != null" >
+        #{progress,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.AffairApply" >
+    update AffairApply
+    <set >
+      <if test="schoolid != null" >
+        SchoolId = #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="applytype != null" >
+        ApplyType = #{applytype,jdbcType=INTEGER},
+      </if>
+      <if test="applytitle != null" >
+        ApplyTitle = #{applytitle,jdbcType=VARCHAR},
+      </if>
+      <if test="applycontent != null" >
+        ApplyContent = #{applycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="applyencname != null" >
+        ApplyEncName = #{applyencname,jdbcType=VARCHAR},
+      </if>
+      <if test="applyencaddr != null" >
+        ApplyEncAddr = #{applyencaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="applymanid != null" >
+        ApplyManId = #{applymanid,jdbcType=BIGINT},
+      </if>
+      <if test="applymancode != null" >
+        ApplyManCode = #{applymancode,jdbcType=VARCHAR},
+      </if>
+      <if test="applymanname != null" >
+        ApplyManName = #{applymanname,jdbcType=VARCHAR},
+      </if>
+      <if test="applymanpic != null" >
+        ApplyManPic = #{applymanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtime != null" >
+        SendTime = #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="progress != null" >
+        Progress = #{progress,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.AffairApply" >
+    update AffairApply
+    set SchoolId = #{schoolid,jdbcType=VARCHAR},
+      ApplyType = #{applytype,jdbcType=INTEGER},
+      ApplyTitle = #{applytitle,jdbcType=VARCHAR},
+      ApplyContent = #{applycontent,jdbcType=VARCHAR},
+      ApplyEncName = #{applyencname,jdbcType=VARCHAR},
+      ApplyEncAddr = #{applyencaddr,jdbcType=VARCHAR},
+      ApplyManId = #{applymanid,jdbcType=BIGINT},
+      ApplyManCode = #{applymancode,jdbcType=VARCHAR},
+      ApplyManName = #{applymanname,jdbcType=VARCHAR},
+      ApplyManPic = #{applymanpic,jdbcType=VARCHAR},
+      SendTime = #{sendtime,jdbcType=TIMESTAMP},
+      Progress = #{progress,jdbcType=TINYINT},
+      Status = #{status,jdbcType=TINYINT}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <!-- 新增申请 -->
+	<insert id="addAffairApply" parameterType="com.goldeneyes.pojo.AffairApply"
+		useGeneratedKeys="true" keyProperty="tabid">
+		insert into AffairApply (SchoolId, ApplyTitle, 
+      ApplyContent, ApplyEncName, ApplyEncAddr, 
+      ApplyManId, ApplyManCode, ApplyManName, 
+      ApplyManPic, SendTime, Progress, 
+      Status)
+    values (#{schoolid,jdbcType=VARCHAR}, #{applytitle,jdbcType=VARCHAR}, 
+      #{applycontent,jdbcType=VARCHAR}, #{applyencname,jdbcType=VARCHAR}, #{applyencaddr,jdbcType=VARCHAR}, 
+      #{applymanid,jdbcType=BIGINT}, #{applymancode,jdbcType=VARCHAR}, #{applymanname,jdbcType=VARCHAR}, 
+      #{applymanpic,jdbcType=VARCHAR}, #{sendtime,jdbcType=TIMESTAMP}, #{progress,jdbcType=TINYINT}, 
+      #{status,jdbcType=TINYINT})
+	</insert>
+	<!-- 撤销申请 -->
+	<update id="setAffairApplyUndo" parameterType="java.lang.Integer">
+		update AffairApply
+		set Progress
+		= 5
+		where tabid = #{0}
+	</update>
+	<!-- 根据审批ID更新流程状态 -->
+	<update id="setApplyStatus" parameterType="java.lang.Integer">
+		update AffairApply
+		set
+		Progress
+		= #{1}
+		where tabid = (select ApplyId from AffairApprove where
+		tabid = #{0})
+	</update>
+	<!-- 获取申请数量 -->
+	<select id="getAffairApplyCnt" resultType="java.lang.Integer">
+		select COUNT(apl.tabid)
+		from AffairApply apl
+		where apl.SchoolId =
+		#{schoolId} and
+		apl.ApplyTitle like
+		'%${title}%' and apl.ApplyManId =
+		#{applyManId}
+		and
+		apl.SendTime &gt;= #{beginDate} and apl.SendTime &lt;=
+		#{endDate}
+		and
+		apl.Status != 0
+		<choose>
+			<when test="status != '-1'">
+				and apl.Progress in (${status})
+			</when>
+		</choose>
+	</select>
+	<!-- 获取申请列表 -->
+	<select id="getAffairApply" resultType="com.goldeneyes.pojo.AffairApply">
+		select top(#{pageSize})
+		apl.tabid, apl.SchoolId, apl.ApplyTitle,
+		apl.ApplyContent, apl.ApplyEncName, apl.ApplyEncAddr,
+		apl.ApplyManId,apl.ApplyManCode,
+		apl.ApplyManName, apl.SendTime,
+		apl.Status, apl.Progress,apl.ApplyManPic
+		from
+		AffairApply apl
+		where apl.SchoolId = #{schoolId} and
+		apl.ApplyTitle like
+		'%${title}%' and apl.ApplyManId = #{applyManId}
+		and
+		apl.SendTime &gt;=
+		#{beginDate} and apl.SendTime &lt;= #{endDate}
+		and
+		apl.Status != 0
+		<choose>
+			<when test="status != '-1'">
+				and apl.Progress in (${status})
+			</when>
+		</choose>
+		and tabid
+		not
+		in
+		(select
+		top((#{pageIndex}-1) * #{pageSize}) tabid
+		from
+		AffairApply apl
+		where apl.SchoolId = #{schoolId} and
+		apl.ApplyTitle like
+		'%${title}%' and apl.ApplyManId = #{applyManId}
+		and
+		apl.SendTime &gt;=
+		#{beginDate} and apl.SendTime &lt;= #{endDate}
+		and
+		apl.Status != 0
+		<choose>
+			<when test="status != '-1'">
+				and apl.Progress in (${status})
+			</when>
+		</choose>
+		order by apl.SendTime desc)
+		order by apl.SendTime desc
+	</select>
+	<!-- 删除申请 -->
+	<update id="delAffairApplys">
+		update AffairApply
+		set Status
+		= #{status}
+		where tabid in
+		(${applyIds})
+	</update>
+	<!-- 获取全部申请数量 -->
+	<select id="getAllAffairApplyCnt" resultType="java.lang.Integer">
+		select
+		COUNT(apl.tabid)
+		from AffairApply apl
+		where apl.SchoolId = #{schoolId}
+		and
+		apl.ApplyTitle like
+		'%${title}%' and apl.ApplyManName like
+		'%${applyMan}%'
+		and
+		apl.SendTime &gt;= #{beginDate} and apl.SendTime
+		&lt;= #{endDate}
+		<choose>
+			<when test="status != '-1'">
+				and apl.Status = #{status}
+			</when>
+		</choose>
+	</select>
+	<!-- 获取申请列表 -->
+	<select id="getAllAffairApply" resultType="com.goldeneyes.pojo.AffairApply">
+		select
+		top(#{pageSize})
+		apl.tabid, apl.SchoolId, apl.ApplyTitle,
+		apl.ApplyContent, apl.ApplyEncName, apl.ApplyEncAddr,
+		apl.ApplyManId,apl.ApplyManCode,
+		apl.ApplyManName, apl.SendTime,
+		apl.Status, apl.Progress, apl.ApplyManPic
+		from
+		AffairApply apl
+		where apl.SchoolId = #{schoolId} and
+		apl.ApplyTitle like
+		'%${title}%' and apl.ApplyManName like '%${applyMan}%'
+		and
+		apl.SendTime
+		&gt;= #{beginDate} and apl.SendTime &lt;= #{endDate}
+		<choose>
+			<when test="status != '-1'">
+				and apl.Status = #{status}
+			</when>
+		</choose>
+		and tabid
+		not
+		in
+		(select
+		top((#{pageIndex}-1) * #{pageSize}) tabid
+		from
+		AffairApply apl
+		where apl.SchoolId = #{schoolId} and
+		apl.ApplyTitle like
+		'%${title}%' and apl.ApplyManName like '%${applyMan}%'
+		and
+		apl.SendTime
+		&gt;= #{beginDate} and apl.SendTime &lt;= #{endDate}
+		<choose>
+			<when test="status != '-1'">
+				and apl.Status = #{status}
+			</when>
+		</choose>
+		order by apl.SendTime desc)
+		order by apl.SendTime desc
+	</select>
+	<!-- 真实删除申请 -->
+	<delete id="realDelAffairApplys">
+		delete from AffairApply
+		where tabid in
+		(${applyIds})
+	</delete>
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.CooperateNoticeReplyMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.CooperateNoticeReply" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="NoticeManId" property="noticemanid" jdbcType="INTEGER" />
+    <result column="ReplyContent" property="replycontent" jdbcType="VARCHAR" />
+    <result column="ReplyTime" property="replytime" jdbcType="TIMESTAMP" />
+    <result column="EncName" property="encname" jdbcType="VARCHAR" />
+    <result column="EncAddr" property="encaddr" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, NoticeManId, ReplyContent, ReplyTime, EncName, EncAddr
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from CooperateNoticeReply
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from CooperateNoticeReply
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.CooperateNoticeReply" >
+    insert into CooperateNoticeReply (TabId, NoticeManId, ReplyContent, 
+      ReplyTime, EncName, EncAddr
+      )
+    values (#{tabid,jdbcType=INTEGER}, #{noticemanid,jdbcType=INTEGER}, #{replycontent,jdbcType=VARCHAR}, 
+      #{replytime,jdbcType=TIMESTAMP}, #{encname,jdbcType=VARCHAR}, #{encaddr,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.CooperateNoticeReply" >
+    insert into CooperateNoticeReply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="noticemanid != null" >
+        NoticeManId,
+      </if>
+      <if test="replycontent != null" >
+        ReplyContent,
+      </if>
+      <if test="replytime != null" >
+        ReplyTime,
+      </if>
+      <if test="encname != null" >
+        EncName,
+      </if>
+      <if test="encaddr != null" >
+        EncAddr,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="noticemanid != null" >
+        #{noticemanid,jdbcType=INTEGER},
+      </if>
+      <if test="replycontent != null" >
+        #{replycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="replytime != null" >
+        #{replytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="encname != null" >
+        #{encname,jdbcType=VARCHAR},
+      </if>
+      <if test="encaddr != null" >
+        #{encaddr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.CooperateNoticeReply" >
+    update CooperateNoticeReply
+    <set >
+      <if test="noticemanid != null" >
+        NoticeManId = #{noticemanid,jdbcType=INTEGER},
+      </if>
+      <if test="replycontent != null" >
+        ReplyContent = #{replycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="replytime != null" >
+        ReplyTime = #{replytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="encname != null" >
+        EncName = #{encname,jdbcType=VARCHAR},
+      </if>
+      <if test="encaddr != null" >
+        EncAddr = #{encaddr,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.CooperateNoticeReply" >
+    update CooperateNoticeReply
+    set NoticeManId = #{noticemanid,jdbcType=INTEGER},
+      ReplyContent = #{replycontent,jdbcType=VARCHAR},
+      ReplyTime = #{replytime,jdbcType=TIMESTAMP},
+      EncName = #{encname,jdbcType=VARCHAR},
+      EncAddr = #{encaddr,jdbcType=VARCHAR}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+</mapper>

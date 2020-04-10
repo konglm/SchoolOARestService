@@ -1,0 +1,85 @@
+/*----------------------------------------------------------------
+ *  Copyright (C) 2017山东金视野教育科技股份有限公司
+ * 版权所有。 
+ *
+ * 文件名：
+ * 文件功能描述：
+ *
+ * 
+ * 创建标识：
+ *
+ * 修改标识：
+ * 修改描述：
+ *----------------------------------------------------------------*/
+
+package com.goldeneyes.controller;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.goldeneyes.service.AffairApproveService;
+import com.goldeneyes.service.NoticeService;
+import com.goldeneyes.util.CommonTool;
+
+import net.sf.json.JSONObject;
+
+/**
+ * @author Administrator
+ *
+ */
+@Controller
+@RequestMapping("/")
+public class CommonController {
+	@Resource
+	AffairApproveService affairApproveService;
+	@Resource
+	NoticeService noticeService;
+	
+	@RequestMapping("/getNoReadApproveCnt")
+	public void getNoApproveCnt(HttpServletRequest request, HttpServletResponse response, Model model) {
+		// 返回参数用
+		JSONObject jsonData = new JSONObject();
+
+		Map<String, String> attrs = CommonTool.getParamByGet(request);
+
+		if (!attrs.containsKey("schoolId") || !attrs.containsKey("readApproveManId")) {
+			CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1004").toString());
+		} else {
+			String schoolId = "";
+			Long readApproveManId = 0l;
+			
+			try {
+				schoolId = attrs.get("schoolId");
+				readApproveManId = Long.parseLong(attrs.get("readApproveManId"));
+			} catch (Exception e) {
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1003").toString());
+				return;
+			}
+
+			int noApproveCnt = 0;
+			int noReadCnt = 0;
+			try {
+				noApproveCnt = affairApproveService.getNoApproveCntByMan(schoolId, readApproveManId);
+				jsonData.put("NoApproveCnt", noApproveCnt);
+				
+				noReadCnt = noticeService.getNoReadCntByMan(schoolId, readApproveManId);				
+				jsonData.put("NoReadCnt", noReadCnt);
+				// 在这里输出，手机端就拿到web返回的值了
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "0000").toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				CommonTool.outJsonString(response, CommonTool.outJson(jsonData, "1013").toString());
+				return;
+			}
+
+		}
+	}
+}

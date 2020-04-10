@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.NoticeManMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.NoticeMan" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="NoticeId" property="noticeid" jdbcType="INTEGER" />
+    <result column="ReceiveManId" property="receivemanid" jdbcType="BIGINT" />
+    <result column="ReceiveManCode" property="receivemancode" jdbcType="VARCHAR" />
+    <result column="ReceiveManName" property="receivemanname" jdbcType="VARCHAR" />
+    <result column="ReceiveManPic" property="receivemanpic" jdbcType="VARCHAR" />
+    <result column="ReplyContent" property="replycontent" jdbcType="VARCHAR" />
+    <result column="ReadTime" property="readtime" jdbcType="TIMESTAMP" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, NoticeId, ReceiveManId, ReceiveManCode, ReceiveManName, ReceiveManPic, ReplyContent, 
+    ReadTime, Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from NoticeMan
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from NoticeMan
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.NoticeMan" >
+    insert into NoticeMan (TabId, NoticeId, ReceiveManId, 
+      ReceiveManCode, ReceiveManName, ReceiveManPic, 
+      ReplyContent, ReadTime, Status
+      )
+    values (#{tabid,jdbcType=INTEGER}, #{noticeid,jdbcType=INTEGER}, #{receivemanid,jdbcType=BIGINT}, 
+      #{receivemancode,jdbcType=VARCHAR}, #{receivemanname,jdbcType=VARCHAR}, #{receivemanpic,jdbcType=VARCHAR}, 
+      #{replycontent,jdbcType=VARCHAR}, #{readtime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.NoticeMan" >
+    insert into NoticeMan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="noticeid != null" >
+        NoticeId,
+      </if>
+      <if test="receivemanid != null" >
+        ReceiveManId,
+      </if>
+      <if test="receivemancode != null" >
+        ReceiveManCode,
+      </if>
+      <if test="receivemanname != null" >
+        ReceiveManName,
+      </if>
+      <if test="receivemanpic != null" >
+        ReceiveManPic,
+      </if>
+      <if test="replycontent != null" >
+        ReplyContent,
+      </if>
+      <if test="readtime != null" >
+        ReadTime,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="noticeid != null" >
+        #{noticeid,jdbcType=INTEGER},
+      </if>
+      <if test="receivemanid != null" >
+        #{receivemanid,jdbcType=BIGINT},
+      </if>
+      <if test="receivemancode != null" >
+        #{receivemancode,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanname != null" >
+        #{receivemanname,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanpic != null" >
+        #{receivemanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="replycontent != null" >
+        #{replycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="readtime != null" >
+        #{readtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.NoticeMan" >
+    update NoticeMan
+    <set >
+      <if test="noticeid != null" >
+        NoticeId = #{noticeid,jdbcType=INTEGER},
+      </if>
+      <if test="receivemanid != null" >
+        ReceiveManId = #{receivemanid,jdbcType=BIGINT},
+      </if>
+      <if test="receivemancode != null" >
+        ReceiveManCode = #{receivemancode,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanname != null" >
+        ReceiveManName = #{receivemanname,jdbcType=VARCHAR},
+      </if>
+      <if test="receivemanpic != null" >
+        ReceiveManPic = #{receivemanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="replycontent != null" >
+        ReplyContent = #{replycontent,jdbcType=VARCHAR},
+      </if>
+      <if test="readtime != null" >
+        ReadTime = #{readtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.NoticeMan" >
+    update NoticeMan
+    set NoticeId = #{noticeid,jdbcType=INTEGER},
+      ReceiveManId = #{receivemanid,jdbcType=BIGINT},
+      ReceiveManCode = #{receivemancode,jdbcType=VARCHAR},
+      ReceiveManName = #{receivemanname,jdbcType=VARCHAR},
+      ReceiveManPic = #{receivemanpic,jdbcType=VARCHAR},
+      ReplyContent = #{replycontent,jdbcType=VARCHAR},
+      ReadTime = #{readtime,jdbcType=TIMESTAMP},
+      Status = #{status,jdbcType=TINYINT}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <!-- 新增通知接收人 -->
+	<insert id="addNoticeMan" parameterType="com.goldeneyes.pojo.NoticeMan"
+		useGeneratedKeys="true" keyProperty="tabid">
+		insert into NoticeMan (NoticeId, ReceiveManId, 
+      ReceiveManCode, ReceiveManName, ReceiveManPic, 
+      ReplyContent, ReadTime, Status
+      )
+    values (#{noticeid,jdbcType=INTEGER}, #{receivemanid,jdbcType=BIGINT}, 
+      #{receivemancode,jdbcType=VARCHAR}, #{receivemanname,jdbcType=VARCHAR}, #{receivemanpic,jdbcType=VARCHAR}, 
+      #{replycontent,jdbcType=VARCHAR}, #{readtime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}
+      )
+	</insert>
+	<!-- 阅读通知公告 -->
+	<update id="setNoticeRead" parameterType="com.goldeneyes.pojo.NoticeMan">
+		update NoticeMan
+		set
+		Status = 1,ReadTime = GETDATE()
+		where NoticeId =
+		#{noticeid,jdbcType=INTEGER} and ReceiveManId =
+		#{receivemanid,jdbcType=BIGINT}
+	</update>
+	<!-- 获取阅读列表 -->
+	<select id="getReadList" resultType="com.goldeneyes.pojo.NoticeMan">
+		select nm.ReceiveManName,nm.ReplyContent,nm.ReadTime,nm.Status,nm.ReceiveManPic
+		from NoticeMan nm
+		where nm.NoticeId = #{0}
+		order by nm.tabid
+	</select>
+	<!-- 通知公告的阅读数 -->
+	<select id="getNoticeReadCntById" resultType="java.lang.Integer">
+		select
+		COUNT(n.tabid)
+		from Notice n,NoticeMan nm
+		where n.tabid = nm.NoticeId
+		and n.tabid = #{0} and nm.Status = #{1}
+	</select>
+	<!-- 是否被某人已读 -->
+	<select id="getNoticeReadCntByMan" resultType="java.lang.Integer">
+		select
+		COUNT(n.tabid)
+		from Notice n,NoticeMan nm
+		where n.tabid = nm.NoticeId
+		and n.tabid = #{0} and nm.receivemanid = #{1} and nm.Status = 1
+	</select>
+	<!-- 删掉通知下的通知人 -->
+	<delete id="delNoticeManByNotice" parameterType="java.lang.Integer">
+		delete from
+		NoticeMan
+		where NoticeId = #{0}
+	</delete>
+	<!-- 获取通知未读数量 -->
+	<select id="getNoticeNoReadCntById" resultType="java.lang.Integer">
+		select
+		COUNT(n.tabid)
+		from Notice n,NoticeMan nm
+		where n.tabid = nm.NoticeId
+		and n.tabid = #{0} and nm.Status = 0
+	</select>
+	<!-- 通过ID获取通知ID -->
+	<select id="getNoticeIdById" resultType="java.lang.Integer">
+		select
+		nm.NoticeId
+		from NoticeMan nm
+		where nm.tabid = #{0}
+	</select>
+	<!-- 通过ID获取阅读状态 -->
+	<select id="getReadStatusById" resultType="java.lang.Integer">
+		select
+		nm.Status
+		from NoticeMan nm
+		where nm.tabid = #{0}
+	</select>
+	<!-- 获取未读数量 -->
+	<select id="getNoticeNoReadCntByMan" resultType="java.lang.Integer">
+		select
+		COUNT(nm.tabid)
+		from Notice n,NoticeMan nm
+		where n.tabid = nm.NoticeId and n.SchoolId = #{0}
+		and nm.ReceiveManId = #{1} and nm.Status = 0
+		and n.Status != 0
+	</select>
+	<!-- 回复通知公告 -->
+	<update id="setNoticeReply" parameterType="com.goldeneyes.pojo.NoticeMan">
+		update NoticeMan
+		set
+		Status = 2,ReadTime = GETDATE(),ReplyContent = #{replycontent,jdbcType=VARCHAR}
+		where NoticeId =
+		#{noticeid,jdbcType=INTEGER} and ReceiveManId =
+		#{receivemanid,jdbcType=VARCHAR}
+	</update>
+	<!-- 删除通知公告的通知人  -->
+	<delete id="realDelNoticeMans">
+		delete from NoticeMan
+		where NoticeId in
+		(${noticeIds})
+	</delete>
+</mapper>

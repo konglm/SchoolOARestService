@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.NoticeMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.Notice" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="SchoolId" property="schoolid" jdbcType="VARCHAR" />
+    <result column="NoticeTitle" property="noticetitle" jdbcType="VARCHAR" />
+    <result column="NoticeContent" property="noticecontent" jdbcType="VARCHAR" />
+    <result column="NoticeEncName" property="noticeencname" jdbcType="VARCHAR" />
+    <result column="NoticeEncAddr" property="noticeencaddr" jdbcType="VARCHAR" />
+    <result column="SmsSync" property="smssync" jdbcType="TINYINT" />
+    <result column="SendManId" property="sendmanid" jdbcType="BIGINT" />
+    <result column="SendManCode" property="sendmancode" jdbcType="VARCHAR" />
+    <result column="SendManName" property="sendmanname" jdbcType="VARCHAR" />
+    <result column="SendManPic" property="sendmanpic" jdbcType="VARCHAR" />
+    <result column="SendTime" property="sendtime" jdbcType="TIMESTAMP" />
+    <result column="Progress" property="progress" jdbcType="TINYINT" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, SchoolId, NoticeTitle, NoticeContent, NoticeEncName, NoticeEncAddr, SmsSync, 
+    SendManId, SendManCode, SendManName, SendManPic, SendTime, Progress, Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from Notice
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from Notice
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.Notice" >
+    insert into Notice (TabId, SchoolId, NoticeTitle, 
+      NoticeContent, NoticeEncName, NoticeEncAddr, 
+      SmsSync, SendManId, SendManCode, 
+      SendManName, SendManPic, SendTime, 
+      Progress, Status)
+    values (#{tabid,jdbcType=INTEGER}, #{schoolid,jdbcType=VARCHAR}, #{noticetitle,jdbcType=VARCHAR}, 
+      #{noticecontent,jdbcType=VARCHAR}, #{noticeencname,jdbcType=VARCHAR}, #{noticeencaddr,jdbcType=VARCHAR}, 
+      #{smssync,jdbcType=TINYINT}, #{sendmanid,jdbcType=BIGINT}, #{sendmancode,jdbcType=VARCHAR}, 
+      #{sendmanname,jdbcType=VARCHAR}, #{sendmanpic,jdbcType=VARCHAR}, #{sendtime,jdbcType=TIMESTAMP}, 
+      #{progress,jdbcType=TINYINT}, #{status,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.Notice" >
+    insert into Notice
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="schoolid != null" >
+        SchoolId,
+      </if>
+      <if test="noticetitle != null" >
+        NoticeTitle,
+      </if>
+      <if test="noticecontent != null" >
+        NoticeContent,
+      </if>
+      <if test="noticeencname != null" >
+        NoticeEncName,
+      </if>
+      <if test="noticeencaddr != null" >
+        NoticeEncAddr,
+      </if>
+      <if test="smssync != null" >
+        SmsSync,
+      </if>
+      <if test="sendmanid != null" >
+        SendManId,
+      </if>
+      <if test="sendmancode != null" >
+        SendManCode,
+      </if>
+      <if test="sendmanname != null" >
+        SendManName,
+      </if>
+      <if test="sendmanpic != null" >
+        SendManPic,
+      </if>
+      <if test="sendtime != null" >
+        SendTime,
+      </if>
+      <if test="progress != null" >
+        Progress,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="schoolid != null" >
+        #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="noticetitle != null" >
+        #{noticetitle,jdbcType=VARCHAR},
+      </if>
+      <if test="noticecontent != null" >
+        #{noticecontent,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeencname != null" >
+        #{noticeencname,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeencaddr != null" >
+        #{noticeencaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="smssync != null" >
+        #{smssync,jdbcType=TINYINT},
+      </if>
+      <if test="sendmanid != null" >
+        #{sendmanid,jdbcType=BIGINT},
+      </if>
+      <if test="sendmancode != null" >
+        #{sendmancode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanname != null" >
+        #{sendmanname,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanpic != null" >
+        #{sendmanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtime != null" >
+        #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="progress != null" >
+        #{progress,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.Notice" >
+    update Notice
+    <set >
+      <if test="schoolid != null" >
+        SchoolId = #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="noticetitle != null" >
+        NoticeTitle = #{noticetitle,jdbcType=VARCHAR},
+      </if>
+      <if test="noticecontent != null" >
+        NoticeContent = #{noticecontent,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeencname != null" >
+        NoticeEncName = #{noticeencname,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeencaddr != null" >
+        NoticeEncAddr = #{noticeencaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="smssync != null" >
+        SmsSync = #{smssync,jdbcType=TINYINT},
+      </if>
+      <if test="sendmanid != null" >
+        SendManId = #{sendmanid,jdbcType=BIGINT},
+      </if>
+      <if test="sendmancode != null" >
+        SendManCode = #{sendmancode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanname != null" >
+        SendManName = #{sendmanname,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanpic != null" >
+        SendManPic = #{sendmanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtime != null" >
+        SendTime = #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="progress != null" >
+        Progress = #{progress,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.Notice" >
+    update Notice
+    set SchoolId = #{schoolid,jdbcType=VARCHAR},
+      NoticeTitle = #{noticetitle,jdbcType=VARCHAR},
+      NoticeContent = #{noticecontent,jdbcType=VARCHAR},
+      NoticeEncName = #{noticeencname,jdbcType=VARCHAR},
+      NoticeEncAddr = #{noticeencaddr,jdbcType=VARCHAR},
+      SmsSync = #{smssync,jdbcType=TINYINT},
+      SendManId = #{sendmanid,jdbcType=BIGINT},
+      SendManCode = #{sendmancode,jdbcType=VARCHAR},
+      SendManName = #{sendmanname,jdbcType=VARCHAR},
+      SendManPic = #{sendmanpic,jdbcType=VARCHAR},
+      SendTime = #{sendtime,jdbcType=TIMESTAMP},
+      Progress = #{progress,jdbcType=TINYINT},
+      Status = #{status,jdbcType=TINYINT}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <!-- 新增通知公告 -->
+	<insert id="addNotice" parameterType="com.goldeneyes.pojo.Notice"
+		useGeneratedKeys="true" keyProperty="tabid">
+		insert into Notice (SchoolId, NoticeTitle, 
+      NoticeContent, NoticeEncName, NoticeEncAddr, 
+      SmsSync, SendManId, SendManCode, 
+      SendManName, SendManPic, SendTime, 
+      Progress, Status)
+    values (#{schoolid,jdbcType=VARCHAR}, #{noticetitle,jdbcType=VARCHAR}, 
+      #{noticecontent,jdbcType=VARCHAR}, #{noticeencname,jdbcType=VARCHAR}, #{noticeencaddr,jdbcType=VARCHAR}, 
+      #{smssync,jdbcType=TINYINT}, #{sendmanid,jdbcType=BIGINT}, #{sendmancode,jdbcType=VARCHAR}, 
+      #{sendmanname,jdbcType=VARCHAR}, #{sendmanpic,jdbcType=VARCHAR}, #{sendtime,jdbcType=TIMESTAMP}, 
+      #{progress,jdbcType=TINYINT}, #{status,jdbcType=TINYINT})
+	</insert>
+	<!-- 屏蔽通知公告 -->
+	<update id="setNoticeUndo" parameterType="java.lang.Integer">
+		update Notice
+		set
+		Progress
+		= 4
+		where tabid = #{0}
+	</update>
+	<!-- 获取发送的通知公告数量 -->
+	<select id="getSendNoticeCnt" resultType="java.lang.Integer">
+		select COUNT(n.tabid)
+		from Notice n
+		where n.SchoolId = #{schoolId} and
+		n.NoticeTitle like
+		'%${title}%' and n.SendManId = #{sendMan}
+		and
+		n.SendTime &gt;= #{beginDate} and n.SendTime &lt;= #{endDate}
+		and
+		n.Status != 0
+		<choose>
+			<when test="status != '-1'">
+				and n.Progress in (${status})
+			</when>
+		</choose>
+	</select>
+	<!-- 获取发送的通知公告列表 -->
+	<select id="getSendNotice" resultType="com.goldeneyes.pojo.Notice">
+		select top(#{pageSize})
+		n.tabid,n.NoticeTitle,n.Progress,n.SendTime,n.SendManName,n.SendManPic
+		from
+		Notice n
+		where n.SchoolId = #{schoolId} and n.NoticeTitle like
+		'%${title}%' and n.SendManId = #{sendMan}
+		and n.SendTime &gt;=
+		#{beginDate} and n.SendTime &lt;= #{endDate}
+		and n.Status != 0
+		<choose>
+			<when test="status != '-1'">
+				and n.Progress in (${status})
+			</when>
+		</choose>
+		and n.tabid
+		not
+		in
+		(select
+		top((#{pageIndex}-1) * #{pageSize}) n.tabid
+		from Notice n
+		where n.SchoolId = #{schoolId} and n.NoticeTitle like
+		'%${title}%' and n.SendManId = #{sendMan}
+		and n.SendTime &gt;=
+		#{beginDate} and n.SendTime &lt;= #{endDate}
+		and n.Status != 0
+		<choose>
+			<when test="status != '-1'">
+				and n.Progress in (${status})
+			</when>
+		</choose>
+		order by n.SendTime desc)
+		order by n.SendTime desc
+	</select>
+	<!-- 获取接收的通知公告数量 -->
+	<select id="getReceiveNoticeCnt" resultType="java.lang.Integer">
+		select COUNT(n.tabid)
+		from Notice n,NoticeMan nm
+		where n.tabid =
+		nm.NoticeId and nm.ReceiveManId = #{receiveManId}
+		and n.SchoolId =
+		#{schoolId} and n.NoticeTitle like
+		'%${title}%' and n.SendManName like
+		'%${sendMan}%'
+		and n.SendTime &gt;= #{beginDate} and n.SendTime &lt;=
+		#{endDate}
+		and n.Status != 0
+		<choose>
+			<when test="status != -1">
+				and n.Progress = #{status}
+			</when>
+		</choose>
+		<choose>
+			<when test="readStatus != -1">
+				and nm.Status = #{readStatus}
+			</when>
+		</choose>
+	</select>
+	<!-- 获取接收的通知公告列表 -->
+	<select id="getReceiveNotice" resultType="com.goldeneyes.vo.NoticeAndNoticeManVO">
+		select top(#{pageSize})
+		nm.tabid noticemanid,n.tabid
+		noticeid,n.SendManName,n.NoticeTitle,n.Progress,n.SendTime,nm.Status
+		Readstatus,nm.ReadTime,n.SendManPic
+		from Notice n,NoticeMan nm
+		where n.tabid =
+		nm.NoticeId and nm.ReceiveManId = #{receiveManId}
+		and n.SchoolId =
+		#{schoolId} and n.NoticeTitle like
+		'%${title}%' and n.SendManName like
+		'%${sendMan}%'
+		and n.SendTime &gt;= #{beginDate} and n.SendTime &lt;=
+		#{endDate}
+		and n.Status != 0
+		<choose>
+			<when test="status != -1">
+				and n.Progress = #{status}
+			</when>
+		</choose>
+		<choose>
+			<when test="readStatus != -1">
+				and nm.Status = #{readStatus}
+			</when>
+		</choose>
+		and n.tabid
+		not
+		in
+		(select
+		top((#{pageIndex}-1) * #{pageSize}) n.tabid
+		from Notice n,NoticeMan nm
+		where n.tabid = nm.NoticeId and
+		nm.ReceiveManId = #{receiveManId}
+		and n.SchoolId = #{schoolId} and
+		n.NoticeTitle like
+		'%${title}%' and n.SendManName like '%${sendMan}%'
+		and n.SendTime &gt;= #{beginDate} and n.SendTime &lt;= #{endDate}
+		and
+		n.Status != 0
+		<choose>
+			<when test="status != -1">
+				and n.Progress = #{status}
+			</when>
+		</choose>
+		<choose>
+			<when test="readStatus != -1">
+				and nm.Status = #{readStatus}
+			</when>
+		</choose>
+		order by n.SendTime desc)
+		order by n.SendTime desc
+	</select>
+	<!-- 删除通知公告 -->
+	<update id="delNotice">
+		update Notice
+		set Status = #{status}
+		where tabid in
+		(${noticeIds})
+	</update>
+	<!-- 获取全部通告数量 -->
+	<select id="getAllNoticeCnt" resultType="java.lang.Integer">
+		select COUNT(n.tabid)
+		from Notice n
+		where n.SchoolId = #{schoolId} and
+		n.NoticeTitle like
+		'%${title}%' and n.SendManName like '%${sendMan}%'
+		and
+		n.SendTime &gt;=
+		#{beginDate} and n.SendTime &lt;= #{endDate}
+		<choose>
+			<when test="status != -1">
+				and n.Status = #{status}
+			</when>
+		</choose>	
+	</select>
+	<!-- 获取全部通告列表 -->
+	<select id="getAllNotice" resultType="com.goldeneyes.vo.NoticeVO">
+		select top(#{pageSize})
+		n.tabid
+		noticeid,n.SendManName,n.NoticeTitle,n.Progress,n.SendTime,n.Status noticestatus,n.SendManPic
+		from
+		Notice n
+		where n.SchoolId = #{schoolId} and
+		n.NoticeTitle like
+		'%${title}%' and n.SendManName like '%${sendMan}%'
+		and
+		n.SendTime &gt;=
+		#{beginDate} and n.SendTime &lt;= #{endDate}
+		<choose>
+			<when test="status != -1">
+				and n.Status = #{status}
+			</when>
+		</choose>
+		and tabid
+		not
+		in
+		(select
+		top((#{pageIndex}-1) * #{pageSize}) tabid
+		from Notice n
+		where n.SchoolId = #{schoolId} and
+		n.NoticeTitle like
+		'%${title}%' and
+		n.SendManName like '%${sendMan}%'
+		and
+		n.SendTime &gt;= #{beginDate} and
+		n.SendTime &lt;= #{endDate}
+		<choose>
+			<when test="status != -1">
+				and n.Status = #{status}
+			</when>
+		</choose>
+		order by n.SendTime desc)
+		order by n.SendTime desc
+	</select>
+	<!-- 设置阅读状态 -->
+	<update id="setNoticeStatus" parameterType="java.lang.Integer">
+		update Notice
+		set
+		Progress
+		= #{1}
+		where tabid = #{0}
+	</update>	
+	<!-- 真实删除通知公告 -->
+	<delete id="realDelNotices">
+		delete from Notice
+		where tabid in
+		(${noticeIds})
+	</delete>
+</mapper>

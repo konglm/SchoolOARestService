@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.WorkFlowMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.WorkFlow" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="SchoolId" property="schoolid" jdbcType="VARCHAR" />
+    <result column="FlowName" property="flowname" jdbcType="VARCHAR" />
+    <result column="FlowNote" property="flownote" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, SchoolId, FlowName, FlowNote, CreateTime, UpdateTime, Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from WorkFlow
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from WorkFlow
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.WorkFlow" >
+    insert into WorkFlow (TabId, SchoolId, FlowName, 
+      FlowNote, CreateTime, UpdateTime, 
+      Status)
+    values (#{tabid,jdbcType=INTEGER}, #{schoolid,jdbcType=VARCHAR}, #{flowname,jdbcType=VARCHAR}, 
+      #{flownote,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.WorkFlow" >
+    insert into WorkFlow
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="schoolid != null" >
+        SchoolId,
+      </if>
+      <if test="flowname != null" >
+        FlowName,
+      </if>
+      <if test="flownote != null" >
+        FlowNote,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="schoolid != null" >
+        #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="flowname != null" >
+        #{flowname,jdbcType=VARCHAR},
+      </if>
+      <if test="flownote != null" >
+        #{flownote,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.WorkFlow" >
+    update WorkFlow
+    <set >
+      <if test="schoolid != null" >
+        SchoolId = #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="flowname != null" >
+        FlowName = #{flowname,jdbcType=VARCHAR},
+      </if>
+      <if test="flownote != null" >
+        FlowNote = #{flownote,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.WorkFlow" >
+    update WorkFlow
+    set SchoolId = #{schoolid,jdbcType=VARCHAR},
+      FlowName = #{flowname,jdbcType=VARCHAR},
+      FlowNote = #{flownote,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      Status = #{status,jdbcType=TINYINT}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <!--添加流程 -->
+	<insert id="addWorkFlow" parameterType="com.goldeneyes.pojo.WorkFlow"
+		useGeneratedKeys="true" keyProperty="tabid">
+		insert into WorkFlow ( SchoolId,
+		FlowName,
+		FlowNote, CreateTime, UpdateTime,
+		Status)
+		values (
+		#{schoolid,jdbcType=VARCHAR}, #{flowname,jdbcType=VARCHAR},
+		#{flownote,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP},
+		#{updatetime,jdbcType=TIMESTAMP},
+		#{status,jdbcType=TINYINT})
+	</insert>
+	<!--修改流程 -->
+	<update id="setWorkFlowById" parameterType="com.goldeneyes.pojo.WorkFlow">
+		update WorkFlow
+		set
+		FlowName = #{flowname,jdbcType=VARCHAR},
+		FlowNote =
+		#{flownote,jdbcType=VARCHAR},
+		UpdateTime=#{updatetime,jdbcType=TIMESTAMP},
+		Status =
+		#{status,jdbcType=TINYINT}
+		where
+		tabid = #{tabid,jdbcType=INTEGER}
+	</update>
+	<!--通过条件获取流程表记录总数 -->
+	<select id="getCountByCondition" resultType="java.lang.Integer">
+
+
+		SELECT
+		COUNT(tabid) FROM WorkFlow WHERE schoolId=#{schoolId}
+
+
+
+		<if test="flowNameKey!=''">
+			and  flowName like '%'+#{flowNameKey}+'%'
+		</if>
+
+	</select>
+	<!--分页或整页获取流程数据以列表形式 -->
+	<select id="getWorkFlowDataByPagination" resultType="com.goldeneyes.pojo.WorkFlow">
+
+		select
+		top(#{pageSize})
+		wf.*
+		from
+		WorkFlow wf
+		where
+		wf.SchoolId=#{schoolId}
+		<if test="flowName!=''">
+			and  wf.flowName like '%'+#{flowName}+'%'
+		</if>
+
+
+		and wf.tabid
+		not
+		in
+		(select
+		top((#{pageIndex}-1) *
+		#{pageSize}) wf.tabid
+		from WorkFlow
+		wf
+		where
+		wf.SchoolId=#{schoolId}
+		<if test="flowName!=''">
+			and  wf.flowName like '%'+#{flowName}+'%'
+		</if>
+
+
+		order by wf.UpdateTime desc)
+		order by wf.UpdateTime desc
+
+
+	</select>
+	<!-- 获取选择用流程列表（必须有效的） -->
+	<select id="getSelWorkFlowByCondition" resultType="com.goldeneyes.pojo.WorkFlow">
+		SELECT
+		tabid,FlowName FROM WorkFlow WHERE SchoolId=#{0} AND Status=1
+
+
+	</select>
+	<!-- 通过学校标识和流程名称查询记录条数 -->
+	<select id="getWorkFlowCountByCondition" resultType="java.lang.Integer">
+		SELECT
+		COUNT(tabid) FROM WorkFlow WHERE SchoolId=#{schoolId} AND FlowName=#{flowNameKey}
+	</select>
+	<!-- 通过流程编号查找对应记录的学校编号 -->
+	<select id="getSchoolIdByRecordId" resultType="com.goldeneyes.pojo.WorkFlow">
+		SELECT SchoolId
+		FROM WorkFlow WHERE tabid=#{0}
+	</select>
+	<!-- 通过学校标识和流程名称查询记录 -->
+	<select id="getTableRecordByCondition" resultType="com.goldeneyes.pojo.WorkFlow">
+		SELECT * FROM WorkFlow WHERE SchoolId=#{schoolId} AND FlowName=#{flowName}
+	</select>
+</mapper>

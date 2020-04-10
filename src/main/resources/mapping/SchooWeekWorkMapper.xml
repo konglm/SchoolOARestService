@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.SchooWeekWorkMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.SchooWeekWork" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="PeriodId" property="periodid" jdbcType="INTEGER" />
+    <result column="Week" property="week" jdbcType="INTEGER" />
+    <result column="BeginTime" property="begintime" jdbcType="TIMESTAMP" />
+    <result column="EndTime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="WeekWork" property="weekwork" jdbcType="VARCHAR" />
+    <result column="WorkDept" property="workdept" jdbcType="VARCHAR" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, PeriodId, Week, BeginTime, EndTime, WeekWork, WorkDept, Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from SchooWeekWork
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from SchooWeekWork
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.SchooWeekWork" >
+    insert into SchooWeekWork (TabId, PeriodId, Week, 
+      BeginTime, EndTime, WeekWork, 
+      WorkDept, Status)
+    values (#{tabid,jdbcType=INTEGER}, #{periodid,jdbcType=INTEGER}, #{week,jdbcType=INTEGER}, 
+      #{begintime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}, #{weekwork,jdbcType=VARCHAR}, 
+      #{workdept,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.SchooWeekWork" >
+    insert into SchooWeekWork
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="periodid != null" >
+        PeriodId,
+      </if>
+      <if test="week != null" >
+        Week,
+      </if>
+      <if test="begintime != null" >
+        BeginTime,
+      </if>
+      <if test="endtime != null" >
+        EndTime,
+      </if>
+      <if test="weekwork != null" >
+        WeekWork,
+      </if>
+      <if test="workdept != null" >
+        WorkDept,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="periodid != null" >
+        #{periodid,jdbcType=INTEGER},
+      </if>
+      <if test="week != null" >
+        #{week,jdbcType=INTEGER},
+      </if>
+      <if test="begintime != null" >
+        #{begintime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="weekwork != null" >
+        #{weekwork,jdbcType=VARCHAR},
+      </if>
+      <if test="workdept != null" >
+        #{workdept,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.SchooWeekWork" >
+    update SchooWeekWork
+    <set >
+      <if test="periodid != null" >
+        PeriodId = #{periodid,jdbcType=INTEGER},
+      </if>
+      <if test="week != null" >
+        Week = #{week,jdbcType=INTEGER},
+      </if>
+      <if test="begintime != null" >
+        BeginTime = #{begintime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null" >
+        EndTime = #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="weekwork != null" >
+        WeekWork = #{weekwork,jdbcType=VARCHAR},
+      </if>
+      <if test="workdept != null" >
+        WorkDept = #{workdept,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.SchooWeekWork" >
+    update SchooWeekWork
+    set PeriodId = #{periodid,jdbcType=INTEGER},
+      Week = #{week,jdbcType=INTEGER},
+      BeginTime = #{begintime,jdbcType=TIMESTAMP},
+      EndTime = #{endtime,jdbcType=TIMESTAMP},
+      WeekWork = #{weekwork,jdbcType=VARCHAR},
+      WorkDept = #{workdept,jdbcType=VARCHAR},
+      Status = #{status,jdbcType=TINYINT}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+</mapper>

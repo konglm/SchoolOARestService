@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goldeneyes.IDao.AnnouncementMapper" >
+  <resultMap id="BaseResultMap" type="com.goldeneyes.pojo.Announcement" >
+    <id column="TabId" property="tabid" jdbcType="INTEGER" />
+    <result column="SchoolId" property="schoolid" jdbcType="VARCHAR" />
+    <result column="AnnouncementTitle" property="announcementtitle" jdbcType="VARCHAR" />
+    <result column="AnnouncementContent" property="announcementcontent" jdbcType="VARCHAR" />
+    <result column="AnnouncementEncName" property="announcementencname" jdbcType="VARCHAR" />
+    <result column="AnnouncementEncAddr" property="announcementencaddr" jdbcType="VARCHAR" />
+    <result column="SmsSync" property="smssync" jdbcType="TINYINT" />
+    <result column="SendManId" property="sendmanid" jdbcType="BIGINT" />
+    <result column="SendManCode" property="sendmancode" jdbcType="VARCHAR" />
+    <result column="SendManName" property="sendmanname" jdbcType="VARCHAR" />
+    <result column="SendManPic" property="sendmanpic" jdbcType="VARCHAR" />
+    <result column="SendTime" property="sendtime" jdbcType="TIMESTAMP" />
+    <result column="CheckStatus" property="checkstatus" jdbcType="TINYINT" />
+    <result column="Progress" property="progress" jdbcType="TINYINT" />
+    <result column="Status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    TabId, SchoolId, AnnouncementTitle, AnnouncementContent, AnnouncementEncName, AnnouncementEncAddr, 
+    SmsSync, SendManId, SendManCode, SendManName, SendManPic, SendTime, CheckStatus, 
+    Progress, Status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from Announcement
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from Announcement
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goldeneyes.pojo.Announcement" >
+    insert into Announcement (TabId, SchoolId, AnnouncementTitle, 
+      AnnouncementContent, AnnouncementEncName, 
+      AnnouncementEncAddr, SmsSync, SendManId, 
+      SendManCode, SendManName, SendManPic, 
+      SendTime, CheckStatus, Progress, 
+      Status)
+    values (#{tabid,jdbcType=INTEGER}, #{schoolid,jdbcType=VARCHAR}, #{announcementtitle,jdbcType=VARCHAR}, 
+      #{announcementcontent,jdbcType=VARCHAR}, #{announcementencname,jdbcType=VARCHAR}, 
+      #{announcementencaddr,jdbcType=VARCHAR}, #{smssync,jdbcType=TINYINT}, #{sendmanid,jdbcType=BIGINT}, 
+      #{sendmancode,jdbcType=VARCHAR}, #{sendmanname,jdbcType=VARCHAR}, #{sendmanpic,jdbcType=VARCHAR}, 
+      #{sendtime,jdbcType=TIMESTAMP}, #{checkstatus,jdbcType=TINYINT}, #{progress,jdbcType=TINYINT}, 
+      #{status,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.goldeneyes.pojo.Announcement" >
+    insert into Announcement
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        TabId,
+      </if>
+      <if test="schoolid != null" >
+        SchoolId,
+      </if>
+      <if test="announcementtitle != null" >
+        AnnouncementTitle,
+      </if>
+      <if test="announcementcontent != null" >
+        AnnouncementContent,
+      </if>
+      <if test="announcementencname != null" >
+        AnnouncementEncName,
+      </if>
+      <if test="announcementencaddr != null" >
+        AnnouncementEncAddr,
+      </if>
+      <if test="smssync != null" >
+        SmsSync,
+      </if>
+      <if test="sendmanid != null" >
+        SendManId,
+      </if>
+      <if test="sendmancode != null" >
+        SendManCode,
+      </if>
+      <if test="sendmanname != null" >
+        SendManName,
+      </if>
+      <if test="sendmanpic != null" >
+        SendManPic,
+      </if>
+      <if test="sendtime != null" >
+        SendTime,
+      </if>
+      <if test="checkstatus != null" >
+        CheckStatus,
+      </if>
+      <if test="progress != null" >
+        Progress,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tabid != null" >
+        #{tabid,jdbcType=INTEGER},
+      </if>
+      <if test="schoolid != null" >
+        #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementtitle != null" >
+        #{announcementtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementcontent != null" >
+        #{announcementcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementencname != null" >
+        #{announcementencname,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementencaddr != null" >
+        #{announcementencaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="smssync != null" >
+        #{smssync,jdbcType=TINYINT},
+      </if>
+      <if test="sendmanid != null" >
+        #{sendmanid,jdbcType=BIGINT},
+      </if>
+      <if test="sendmancode != null" >
+        #{sendmancode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanname != null" >
+        #{sendmanname,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanpic != null" >
+        #{sendmanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtime != null" >
+        #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkstatus != null" >
+        #{checkstatus,jdbcType=TINYINT},
+      </if>
+      <if test="progress != null" >
+        #{progress,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goldeneyes.pojo.Announcement" >
+    update Announcement
+    <set >
+      <if test="schoolid != null" >
+        SchoolId = #{schoolid,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementtitle != null" >
+        AnnouncementTitle = #{announcementtitle,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementcontent != null" >
+        AnnouncementContent = #{announcementcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementencname != null" >
+        AnnouncementEncName = #{announcementencname,jdbcType=VARCHAR},
+      </if>
+      <if test="announcementencaddr != null" >
+        AnnouncementEncAddr = #{announcementencaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="smssync != null" >
+        SmsSync = #{smssync,jdbcType=TINYINT},
+      </if>
+      <if test="sendmanid != null" >
+        SendManId = #{sendmanid,jdbcType=BIGINT},
+      </if>
+      <if test="sendmancode != null" >
+        SendManCode = #{sendmancode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanname != null" >
+        SendManName = #{sendmanname,jdbcType=VARCHAR},
+      </if>
+      <if test="sendmanpic != null" >
+        SendManPic = #{sendmanpic,jdbcType=VARCHAR},
+      </if>
+      <if test="sendtime != null" >
+        SendTime = #{sendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkstatus != null" >
+        CheckStatus = #{checkstatus,jdbcType=TINYINT},
+      </if>
+      <if test="progress != null" >
+        Progress = #{progress,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goldeneyes.pojo.Announcement" >
+    update Announcement
+    set SchoolId = #{schoolid,jdbcType=VARCHAR},
+      AnnouncementTitle = #{announcementtitle,jdbcType=VARCHAR},
+      AnnouncementContent = #{announcementcontent,jdbcType=VARCHAR},
+      AnnouncementEncName = #{announcementencname,jdbcType=VARCHAR},
+      AnnouncementEncAddr = #{announcementencaddr,jdbcType=VARCHAR},
+      SmsSync = #{smssync,jdbcType=TINYINT},
+      SendManId = #{sendmanid,jdbcType=BIGINT},
+      SendManCode = #{sendmancode,jdbcType=VARCHAR},
+      SendManName = #{sendmanname,jdbcType=VARCHAR},
+      SendManPic = #{sendmanpic,jdbcType=VARCHAR},
+      SendTime = #{sendtime,jdbcType=TIMESTAMP},
+      CheckStatus = #{checkstatus,jdbcType=TINYINT},
+      Progress = #{progress,jdbcType=TINYINT},
+      Status = #{status,jdbcType=TINYINT}
+    where TabId = #{tabid,jdbcType=INTEGER}
+  </update>
+</mapper>
